@@ -1,0 +1,31 @@
+{
+  "name": "chaos-board-backend",
+  "version": "1.0.0",
+  "description": "Backend for chaos-board drag and drop app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "watch": "nodemon index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "drag and drop"
+  ],
+  "author": "Quidiox",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "1.18.2",
+    "cors": "2.8.4",
+    "express": "4.16.3",
+    "helmet": "3.12.0",
+    "morgan": "1.9.0"
+  },
+  "devDependencies": {
+    "eslint": "4.19.1",
+    "eslint-config-prettier": "2.9.0",
+    "eslint-plugin-prettier": "2.6.0",
+    "eslint-plugin-standard": "3.0.1",
+    "nodemon": "1.17.3",
+    "prettier": "1.12.1"
+  }
+}

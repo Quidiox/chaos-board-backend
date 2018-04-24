@@ -1,0 +1,22 @@
+const express = require('express')
+const app = express()
+const helmet = require('helmet')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const data = require('./db.json')
+
+app.use(cors())
+app.use(helmet())
+
+app.get('/', (req, res) => {
+  res.send('<h1>hello world</h1>')
+})
+
+app.get('/containers', (req, res) => {
+  res.json(data)
+})
+
+const PORT = process.env.PORT || 3005
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
