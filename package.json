@@ -4,9 +4,10 @@
   "description": "Backend for chaos-board drag and drop app",
   "main": "index.js",
   "scripts": {
-    "start": "node index",
-    "watch": "nodemon index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cross-env NODE_ENV=production node index",
+    "watch": "cross-env NODE_ENV=development nodemon index",
+    "test": "cross-env NODE_ENV=test jest --verbose",
+    "lint": "eslint ."
   },
   "keywords": [
     "drag and drop"
@@ -16,11 +17,13 @@
   "dependencies": {
     "body-parser": "1.18.2",
     "cors": "2.8.4",
+    "dotenv": "5.0.1",
     "express": "4.16.3",
     "helmet": "3.12.0",
     "morgan": "1.9.0"
   },
   "devDependencies": {
+    "cross-env": "5.1.4",
     "eslint": "4.19.1",
     "eslint-config-prettier": "2.9.0",
     "eslint-plugin-prettier": "2.6.0",

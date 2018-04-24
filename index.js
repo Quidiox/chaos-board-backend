@@ -4,6 +4,7 @@ const helmet = require('helmet')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const data = require('./db.json')
+const config = require('./utils/config')
 
 app.use(cors())
 app.use(helmet())
@@ -16,7 +17,7 @@ app.get('/containers', (req, res) => {
   res.json(data)
 })
 
-const PORT = process.env.PORT || 3005
+const PORT = config.port
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
