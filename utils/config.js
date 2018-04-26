@@ -4,9 +4,9 @@ module.exports =
   process.env.NODE_ENV === 'development'
     ? {
         port: process.env.PORT,
-        mongoUrl: process.env.MONGODB_URL
+        mongoURI: process.env.MONGODB_URI
       }
     : {
         port: process.env.TEST_PORT,
-        mongoUrl: process.env.TEST_MONGODB_URL
+        mongoURI: process.env.TEST_MONGODB_URI
       }
