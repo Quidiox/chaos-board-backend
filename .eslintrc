@@ -2,5 +2,6 @@
   "extends": ["prettier", "prettier/standard"],
   "parserOptions": {
     "ecmaVersion": 6
-  }
+  },
+  "parser": "babel-eslint"
 }

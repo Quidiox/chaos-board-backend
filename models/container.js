@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Card = require('./card')
 
-const Container = mongoose.model('Container', {
+const containerSchema = mongoose.Schema({
   title: String,
   description: String,
   position: Number,
@@ -10,5 +10,27 @@ const Container = mongoose.model('Container', {
   boardDescription: String,
   boardId: String
 })
+
+containerSchema.statics.format = ({
+  _id,
+  title,
+  description,
+  position,
+  cards,
+  boardId,
+  boardTitle,
+  boardDescription
+}) => ({
+  id: _id,
+  title,
+  description,
+  position,
+  cards,
+  boardId,
+  boardTitle,
+  boardDescription
+})
+
+const Container = mongoose.model('Container', containerSchema)
 
 module.exports = Container

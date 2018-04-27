@@ -7,6 +7,7 @@ const morgan = require('morgan')
 const mongoose = require('mongoose')
 const data = require('./db.json')
 const config = require('./utils/config')
+const boardRouter = require('./controllers/board')
 
 const app = express()
 mongoose.connect(config.mongoURI)
@@ -17,9 +18,7 @@ app.use(helmet())
 app.use(cors())
 app.use(bodyParser.json())
 
-app.get('/', (req, res) => {
-  res.send('<h1>hello world</h1>')
-})
+app.use('/api/board', boardRouter)
 
 app.get('/containers', (req, res) => {
   res.json(data)
