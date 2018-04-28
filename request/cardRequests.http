@@ -1,0 +1,13 @@
+
+POST http://localhost:3005/api/board/5ae2ec0403601a531446b29a/card
+Content-Type: application/json
+
+{
+  "title": "yes it works",
+  "text": "at last",
+  "position": 0
+}
+
+###
+
+DELETE http://localhost:3005/api/board/5ae2ec0403601a531446b29a/card/5ae449663956ff23b41da2c2

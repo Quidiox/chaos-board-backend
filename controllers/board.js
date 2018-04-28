@@ -5,15 +5,18 @@ const Card = require('../models/card')
 
 boardRouter.get('/', async (req, res) => {
   try {
-    const containers = await Container.find({})
-    res.json(containers)
+    const containers = await Container.find({}).populate('cards')
+    const formattedContainers = containers.map(Container.format)
+    res.json(formattedContainers)
   } catch (error) {}
 })
 
 boardRouter.get('/:boardId', async (req, res) => {
   try {
-    const containers = await Container.find({ boardId: req.params.boardId })
-    const formattedContainers = containers.map(container => Container.format(container))
+    const containers = await Container.find({
+      boardId: req.params.boardId
+    }).populate('cards')
+    const formattedContainers = containers.map(Container.format)
     res.json(formattedContainers)
   } catch (error) {
     console.log(error)
@@ -72,14 +75,30 @@ boardRouter.post('/:containerId/card', async (req, res) => {
     const card = new Card({
       title: body.title,
       text: body.text,
-      description: body.description
+      position: body.position
     })
     const savedCard = await card.save()
-    const updatedContainer = await Container.findByIdAndUpdate(req.params.containerId, )
+    const container = await Container.findById(req.params.containerId)
+    await container.cards.push(savedCard._id)
+    await container.save()
     res.json(Card.format(savedCard))
   } catch (error) {
     console.log(error)
-    res.status(400).json({error: 'adding new card failed'})
+    res.status(400).json({ error: 'adding new card failed' })
+  }
+})
+
+boardRouter.delete('/:containerId/card/:cardId', async (req, res) => {
+  try {
+    await Card.findByIdAndRemove(req.params.cardId)
+    await Container.update(
+      { _id: req.params.containerId },
+      { $pull: { cards: req.params.cardId } }
+    )
+    res.status(204).end()
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'deleting card failed' })
   }
 })
 
