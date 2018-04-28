@@ -8,7 +8,10 @@ boardRouter.get('/', async (req, res) => {
     const containers = await Container.find({}).populate('cards')
     const formattedContainers = containers.map(Container.format)
     res.json(formattedContainers)
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+    res.status(404).json({ error: 'something went wrong' })
+  }
 })
 
 boardRouter.get('/:boardId', async (req, res) => {
@@ -20,6 +23,7 @@ boardRouter.get('/:boardId', async (req, res) => {
     res.json(formattedContainers)
   } catch (error) {
     console.log(error)
+    res.status(404).json({ error: 'board does not exist' })
   }
 })
 
@@ -42,16 +46,21 @@ boardRouter.post('/', async (req, res) => {
     res.json(Container.format(savedContainer))
   } catch (error) {
     console.log(error)
+    res.status(400).json({error: 'something went wrong'})
   }
 })
 
 boardRouter.delete('/:containerId', async (req, res) => {
   try {
-    await Container.findByIdAndRemove(req.params.containerId)
-    response.status(204).end()
+    const container = await Container.findById(req.params.containerId)
+    await container.cards.map(async card => {
+      await Card.findByIdAndRemove(card._id)
+    })
+    await Container.findByIdAndRemove(container._id)
+    res.status(204).end()
   } catch (error) {
     console.log(error)
-    response.status(400).send({ error: 'malformatted id' })
+    res.status(400).send({ error: 'malformatted id' })
   }
 })
 
@@ -65,7 +74,7 @@ boardRouter.put('/:containerId', async (req, res) => {
     res.json(Container.format(updatedContainer))
   } catch (error) {
     console.log(error)
-    response.status(400).send({ error: 'malformatted id or missing data' })
+    res.status(400).send({ error: 'malformatted id or data' })
   }
 })
 
@@ -102,6 +111,19 @@ boardRouter.delete('/:containerId/card/:cardId', async (req, res) => {
   }
 })
 
-boardRouter.put('/:containerId/card/:cardId')
+boardRouter.put('/:containerId/card/:cardId', async (req, res) => {
+  try {
+    const body = req.body
+    const updatedCard = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      req.body,
+      { new: true }
+    )
+    res.json(Card.format(updatedCard))
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'malformatted id or data' })
+  }
+})
 
 module.exports = boardRouter

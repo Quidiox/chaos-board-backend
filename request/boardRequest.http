@@ -1,4 +1,16 @@
 
+GET http://localhost:3005/api/board
+
+###
+
+GET http://localhost:3005/api/board/9e2a2af0-49fc-11e8-ba20-e59ca261772f
+
+###
+
+DELETE http://localhost:3005/api/board/5ae2f335d736b0637017dc4f
+
+###
+
 POST http://localhost:3005/api/board
 Content-Type: application/json
 
@@ -16,12 +28,7 @@ PUT http://localhost:3005/api/board/5ae2ec0403601a531446b29a
 Content-Type: application/json
 
 {
-  "title": "updated title"
+    "title": "updated title"
 }
 ###
 
-GET http://localhost:3005/api/board
-
-###
-
-GET http://localhost:3005/api/board/9e2a2af0-49fc-11e8-ba20-e59ca261772f
