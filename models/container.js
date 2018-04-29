@@ -5,10 +5,7 @@ const containerSchema = mongoose.Schema({
   title: String,
   description: String,
   position: Number,
-  cards: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }],
-  boardTitle: String,
-  boardDescription: String,
-  boardId: String
+  cards: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }]
 })
 
 containerSchema.statics.format = ({
@@ -16,19 +13,13 @@ containerSchema.statics.format = ({
   title,
   description,
   position,
-  cards,
-  boardId,
-  boardTitle,
-  boardDescription
+  cards
 }) => ({
   id: _id,
   title,
   description,
   position,
-  cards,
-  boardId,
-  boardTitle,
-  boardDescription
+  cards
 })
 
 const Container = mongoose.model('Container', containerSchema)

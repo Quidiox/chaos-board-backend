@@ -1,13 +1,13 @@
 const boardRouter = require('express').Router()
-const uuidv1 = require('uuid/v1')
+const Board = require('../models/board')
 const Container = require('../models/container')
 const Card = require('../models/card')
 
 boardRouter.get('/', async (req, res) => {
   try {
-    const containers = await Container.find({}).populate('cards')
-    const formattedContainers = containers.map(Container.format)
-    res.json(formattedContainers)
+    const boards = await Board.find({}).populate('containers')
+    const formattedBoards = boards.map(Board.format)
+    res.json(formattedBoards)
   } catch (error) {
     console.log(error)
     res.status(404).json({ error: 'something went wrong' })
@@ -16,113 +16,53 @@ boardRouter.get('/', async (req, res) => {
 
 boardRouter.get('/:boardId', async (req, res) => {
   try {
-    const containers = await Container.find({
-      boardId: req.params.boardId
-    }).populate('cards')
-    const formattedContainers = containers.map(Container.format)
-    res.json(formattedContainers)
+    const board = await Board.findById(req.params.boardId).populate(
+      'containers'
+    )
+    res.json(Board.format(board))
   } catch (error) {
     console.log(error)
-    res.status(404).json({ error: 'board does not exist' })
+    res.status(404).json({ error: 'requested board does not exist' })
   }
 })
 
 boardRouter.post('/', async (req, res) => {
   try {
     const body = req.body
-    if (!body.title) {
-      res.status(400).json({ error: 'container missing' })
-    }
-    const container = new Container({
+    const board = new Board({
       title: body.title,
-      description: body.description,
-      position: body.position || 0,
-      cards: [],
-      boardId: body.boardId || uuidv1(),
-      boardTitle: body.boardTitle,
-      boardDescription: body.boardDescription
+      description: body.description
     })
-    const savedContainer = await container.save()
-    res.json(Container.format(savedContainer))
+    const savedBoard = await board.save()
+    res.json(Board.format(savedBoard))
   } catch (error) {
     console.log(error)
-    res.status(400).json({error: 'something went wrong'})
+    res.status(400).json({ error: 'something went wrong when adding board' })
   }
 })
 
-boardRouter.delete('/:containerId', async (req, res) => {
+boardRouter.put('/:boardId', async (req, res) => {
   try {
-    const container = await Container.findById(req.params.containerId)
-    await container.cards.map(async card => {
-      await Card.findByIdAndRemove(card._id)
-    })
-    await Container.findByIdAndRemove(container._id)
-    res.status(204).end()
-  } catch (error) {
-    console.log(error)
-    res.status(400).send({ error: 'malformatted id' })
-  }
-})
-
-boardRouter.put('/:containerId', async (req, res) => {
-  try {
-    const updatedContainer = await Container.findByIdAndUpdate(
-      req.params.containerId,
+    const body = req.body
+    const updatedBoard = await Board.findByIdAndUpdate(
+      req.params.boardId,
       req.body,
       { new: true }
     )
-    res.json(Container.format(updatedContainer))
+    res.json(updatedBoard)
   } catch (error) {
     console.log(error)
-    res.status(400).send({ error: 'malformatted id or data' })
+    res.status(400).json({ error: 'something went wrong while editing board' })
   }
 })
 
-boardRouter.post('/:containerId/card', async (req, res) => {
+boardRouter.delete('/:boardId', async (req, res) => {
   try {
-    const body = req.body
-    const card = new Card({
-      title: body.title,
-      text: body.text,
-      position: body.position
-    })
-    const savedCard = await card.save()
-    const container = await Container.findById(req.params.containerId)
-    await container.cards.push(savedCard._id)
-    await container.save()
-    res.json(Card.format(savedCard))
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({ error: 'adding new card failed' })
-  }
-})
-
-boardRouter.delete('/:containerId/card/:cardId', async (req, res) => {
-  try {
-    await Card.findByIdAndRemove(req.params.cardId)
-    await Container.update(
-      { _id: req.params.containerId },
-      { $pull: { cards: req.params.cardId } }
-    )
+    await Board.remove({_id: req.params.boardId})
     res.status(204).end()
   } catch (error) {
     console.log(error)
-    res.status(400).json({ error: 'deleting card failed' })
-  }
-})
-
-boardRouter.put('/:containerId/card/:cardId', async (req, res) => {
-  try {
-    const body = req.body
-    const updatedCard = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      req.body,
-      { new: true }
-    )
-    res.json(Card.format(updatedCard))
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({ error: 'malformatted id or data' })
+    res.status(400).json({error: 'malformed id'})
   }
 })
 
