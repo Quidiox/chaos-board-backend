@@ -1,7 +1,8 @@
 const cardRouter = require('express').Router()
+const Container = require('../models/container')
 const Card = require('../models/card')
 
-cardRouter.post('/:containerId/card', async (req, res) => {
+cardRouter.post('/:containerId', async (req, res) => {
   try {
     const body = req.body
     const card = new Card({
@@ -20,7 +21,7 @@ cardRouter.post('/:containerId/card', async (req, res) => {
   }
 })
 
-cardRouter.delete('/:containerId/card/:cardId', async (req, res) => {
+cardRouter.delete('/:containerId/:cardId', async (req, res) => {
   try {
     await Card.findByIdAndRemove(req.params.cardId)
     await Container.update(
@@ -34,7 +35,7 @@ cardRouter.delete('/:containerId/card/:cardId', async (req, res) => {
   }
 })
 
-cardRouter.put('/:containerId/card/:cardId', async (req, res) => {
+cardRouter.put('/:containerId/:cardId', async (req, res) => {
   try {
     const body = req.body
     const updatedCard = await Card.findByIdAndUpdate(

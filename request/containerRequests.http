@@ -1,0 +1,30 @@
+
+@baseUrl=http://localhost:3005/api/container
+@containerId=5ae70eddb52b800588b2e7c5
+@boardId=5ae6cc4293a5fc665067174f
+
+GET {{baseUrl}}/{{containerId}}
+
+###
+
+DELETE {{baseUrl}}/{{containerId}}
+
+###
+
+POST {{baseUrl}}/{{boardId}}
+Content-Type: application/json
+
+{
+  "title": "test container title",
+  "description": "container description",
+  "position": 0
+}
+
+###
+
+PUT {{baseUrl}}/{{boardId}}/{{containerId}}
+Content-Type: application/json
+
+{
+    "title": "updated container title"
+}

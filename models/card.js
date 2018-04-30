@@ -6,12 +6,14 @@ const cardSchema = new mongoose.Schema({
   position: Number
 })
 
-cardSchema.statics.format = ({ _id, title, text, position }) => ({
-  id: _id,
-  title,
-  text,
-  position
-})
+cardSchema.statics.format = function({ _id, title, text, position }) {
+  return {
+    id: _id,
+    title,
+    text,
+    position
+  }
+}
 
 const Card = mongoose.model('Card', cardSchema)
 

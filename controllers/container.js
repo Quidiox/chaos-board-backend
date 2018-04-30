@@ -1,14 +1,16 @@
 const containerRouter = require('express').Router()
-const Container = require('./Container')
+const Container = require('../models/container')
+const Board = require('../models/board')
 
-containerRouter.get('/', async (req, res) => {
+containerRouter.get('/:containerId', async (req, res) => {
   try {
-    const containers = await Container.find({}).populate('cards')
-    const formattedContainers = containers.map(Container.format)
-    res.json(formattedContainers)
+    const container = await Container.findById(
+      req.params.containerId
+    ).populate('cards')
+    res.json(Container.format(container))
   } catch (error) {
     console.log(error)
-    res.status(404).json({ error: 'something went wrong' })
+    res.status(404).json({ error: 'malformed id' })
   }
 })
 
@@ -25,23 +27,28 @@ containerRouter.get('/:boardId', async (req, res) => {
   }
 })
 
-containerRouter.post('/', async (req, res) => {
+containerRouter.post('/:boardId', async (req, res) => {
   try {
     const body = req.body
     if (!body.title) {
       res.status(400).json({ error: 'container missing' })
     }
+    console.log('hello ',body)
     const container = new Container({
       title: body.title,
       description: body.description,
-      position: body.position || 0,
-      cards: []
+      position: body.position
     })
+    console.log('no hello? ', container)
     const savedContainer = await container.save()
+    console.log(savedContainer)
+    const board = await Board.findById(req.params.boardId)
+    await board.containers.push(savedContainer._id)
+    await board.save()
     res.json(Container.format(savedContainer))
   } catch (error) {
     console.log(error)
-    res.status(400).json({error: 'something went wrong'})
+    res.status(400).json({ error: 'something went wrong' })
   }
 })
 

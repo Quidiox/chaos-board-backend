@@ -1,0 +1,34 @@
+
+@baseUrl=http://localhost:3005/api/board
+@boardId=5ae6cc4293a5fc665067174f
+@deleteBoardId=z
+
+GET {{baseUrl}}
+
+###
+
+GET {{baseUrl}}/{{boardId}}
+
+###
+
+DELETE {{baseUrl}}/{{deleteBoardId}}
+
+###
+
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "title": "testing2",
+  "description": "test description"
+}
+
+###
+
+PUT {{baseUrl}}/{{boardId}}
+Content-Type: application/json
+
+{
+    "title": "updated title",
+    "description": "something else than first"
+}

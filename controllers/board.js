@@ -1,7 +1,6 @@
 const boardRouter = require('express').Router()
 const Board = require('../models/board')
 const Container = require('../models/container')
-const Card = require('../models/card')
 
 boardRouter.get('/', async (req, res) => {
   try {
@@ -43,7 +42,6 @@ boardRouter.post('/', async (req, res) => {
 
 boardRouter.put('/:boardId', async (req, res) => {
   try {
-    const body = req.body
     const updatedBoard = await Board.findByIdAndUpdate(
       req.params.boardId,
       req.body,

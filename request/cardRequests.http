@@ -1,5 +1,9 @@
 
-POST http://localhost:3005/api/board/5ae2f335d736b0637017dc4f/card
+@baseUrl=http://localhost:3005/api/card
+@containerId=5ae70eddb52b800588b2e7c5
+@cardId=5ae714ed490fa84734900534
+
+POST {{baseUrl}}/{{containerId}}
 Content-Type: application/json
 
 {
@@ -10,11 +14,11 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3005/api/board/5ae2ec0403601a531446b29a/card/5ae449663956ff23b41da2c2
+DELETE {{baseUrl}}/{{containerId}}/{{cardId}}
 
 ###
 
-PUT http://localhost:3005/api/board/5ae2ec0403601a531446b29a/card/5ae449930f514e5da08fc48d
+PUT {{baseUrl}}/{{containerId}}/{{cardId}}
 Content-Type: application/json
 
 {
