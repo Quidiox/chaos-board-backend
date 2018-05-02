@@ -9,7 +9,7 @@ const boardSchema = new mongoose.Schema({
 
 boardSchema.statics.format = function({ _id, title, description, containers }) {
   return {
-    id: _id,
+    _id,
     title,
     description,
     containers

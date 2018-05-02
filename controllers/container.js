@@ -1,6 +1,17 @@
 const containerRouter = require('express').Router()
 const Container = require('../models/container')
 const Board = require('../models/board')
+const Card = require('../models/card')
+
+containerRouter.get('/', async (req, res) => {
+  try {
+    const containers = await Container.find({}).populate('cards')
+    res.json(containers.map(Container.format))
+  } catch (error) {
+    console.log(error)
+    res.status(400).json('get request failed')
+  }
+})
 
 containerRouter.get('/:containerId', async (req, res) => {
   try {
@@ -39,9 +50,7 @@ containerRouter.post('/:boardId', async (req, res) => {
       description: body.description,
       position: body.position
     })
-    console.log('no hello? ', container)
     const savedContainer = await container.save()
-    console.log(savedContainer)
     const board = await Board.findById(req.params.boardId)
     await board.containers.push(savedContainer._id)
     await board.save()

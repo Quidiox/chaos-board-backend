@@ -1,10 +1,15 @@
 const boardRouter = require('express').Router()
 const Board = require('../models/board')
 const Container = require('../models/container')
+const Card = require('../models/card')
 
 boardRouter.get('/', async (req, res) => {
   try {
-    const boards = await Board.find({}).populate('containers')
+    const boards = await Board.find({}).populate({
+      path: 'containers',
+      select: 'title description position',
+      populate: { path: 'cards', model: 'Card', select: 'title text position' }
+    })
     const formattedBoards = boards.map(Board.format)
     res.json(formattedBoards)
   } catch (error) {
@@ -15,9 +20,11 @@ boardRouter.get('/', async (req, res) => {
 
 boardRouter.get('/:boardId', async (req, res) => {
   try {
-    const board = await Board.findById(req.params.boardId).populate(
-      'containers'
-    )
+    const board = await Board.findById(req.params.boardId).populate({
+      path: 'containers',
+      select: 'title description position',
+      populate: { path: 'cards', model: 'Card', select: 'title text position' }
+    })
     res.json(Board.format(board))
   } catch (error) {
     console.log(error)
@@ -56,11 +63,21 @@ boardRouter.put('/:boardId', async (req, res) => {
 
 boardRouter.delete('/:boardId', async (req, res) => {
   try {
-    await Board.remove({_id: req.params.boardId})
+    const board = await Board.findById(req.params.boardId).populate(
+      'containers'
+    )
+    await board.containers.map(async container => {
+      await container.cards.map(async card => {
+        console.log(card)
+        await Card.findByIdAndRemove(card)
+      })
+      await Container.findByIdAndRemove(container._id)
+    })
+    await Board.findByIdAndRemove(req.params.boardId)
     res.status(204).end()
   } catch (error) {
     console.log(error)
-    res.status(400).json({error: 'malformed id'})
+    res.status(400).json({ error: 'malformed id' })
   }
 })
 

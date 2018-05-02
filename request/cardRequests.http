@@ -1,7 +1,11 @@
 
 @baseUrl=http://localhost:3005/api/card
-@containerId=5ae70eddb52b800588b2e7c5
+@containerId=5ae97f4c4964c83b1006f55e
 @cardId=5ae714ed490fa84734900534
+
+GET {{baseUrl}}
+
+###
 
 POST {{baseUrl}}/{{containerId}}
 Content-Type: application/json

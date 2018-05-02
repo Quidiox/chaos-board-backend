@@ -8,7 +8,7 @@ const cardSchema = new mongoose.Schema({
 
 cardSchema.statics.format = function({ _id, title, text, position }) {
   return {
-    id: _id,
+    _id,
     title,
     text,
     position

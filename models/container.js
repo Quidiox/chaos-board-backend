@@ -15,7 +15,7 @@ containerSchema.statics.format = function({
   position,
   cards
 }) {
-  return { id: _id, title, description, position, cards }
+  return { _id, title, description, position, cards }
 }
 
 const Container = mongoose.model('Container', containerSchema)

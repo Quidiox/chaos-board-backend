@@ -2,6 +2,16 @@ const cardRouter = require('express').Router()
 const Container = require('../models/container')
 const Card = require('../models/card')
 
+cardRouter.get('/', async (req, res) => {
+  try {
+    const cards = await Card.find({})
+    res.json(cards.map(Card.format))
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({error: 'get cards request failed'})
+  }
+})
+
 cardRouter.post('/:containerId', async (req, res) => {
   try {
     const body = req.body
