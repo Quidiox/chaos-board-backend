@@ -31,5 +31,13 @@ PUT {{baseUrl}}/{{boardId}}/{{containerId}}
 Content-Type: application/json
 
 {
-    "title": "updated container title"
+  "title": "updated container title"
+}
+
+###
+PUT {{baseUrl}}/{{containerId}}
+Content-Type: application/json
+
+{
+  "title": "abc"
 }

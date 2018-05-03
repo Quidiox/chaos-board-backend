@@ -15,25 +15,13 @@ containerRouter.get('/', async (req, res) => {
 
 containerRouter.get('/:containerId', async (req, res) => {
   try {
-    const container = await Container.findById(
-      req.params.containerId
-    ).populate('cards')
+    const container = await Container.findById(req.params.containerId).populate(
+      'cards'
+    )
     res.json(container)
   } catch (error) {
     console.log(error)
     res.status(404).json({ error: 'malformed id' })
-  }
-})
-
-containerRouter.get('/:boardId', async (req, res) => {
-  try {
-    const containers = await Container.find({
-      boardId: req.params.boardId
-    }).populate('cards')
-    res.json(containers)
-  } catch (error) {
-    console.log(error)
-    res.status(404).json({ error: 'board does not exist' })
   }
 })
 
@@ -43,7 +31,7 @@ containerRouter.post('/:boardId', async (req, res) => {
     if (!body.title) {
       res.status(400).json({ error: 'container missing' })
     }
-    console.log('hello ',body)
+    console.log('hello ', body)
     const container = new Container({
       title: body.title,
       description: body.description,
@@ -70,7 +58,7 @@ containerRouter.delete('/:containerId', async (req, res) => {
     res.status(204).end()
   } catch (error) {
     console.log(error)
-    res.status(400).send({ error: 'malformatted id' })
+    res.status(400).json({ error: 'malformatted id' })
   }
 })
 
@@ -84,7 +72,7 @@ containerRouter.put('/:containerId', async (req, res) => {
     res.json(updatedContainer)
   } catch (error) {
     console.log(error)
-    res.status(400).send({ error: 'malformatted id or data' })
+    res.status(400).json({ error: 'malformatted id or data' })
   }
 })
 

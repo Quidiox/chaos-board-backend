@@ -69,4 +69,20 @@ cardRouter.put('/:containerId/:cardId', async (req, res) => {
   }
 })
 
+cardRouter.put('/move', async (req, res) => {
+  try {
+    const body = req.body
+    const movedCard = await Card.findById(body.cardId)
+    const dragPosCard = await Card.findById(body.dragPosCardId)
+    movedCard.position = body.dragIndex
+    dragPosCard.position = body.hoverIndex
+    await movedCard.save()
+    await dragPosCard.save()
+    res.json({success: 'all went well'})
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'malformatted id' })
+  }
+})
+
 module.exports = cardRouter
