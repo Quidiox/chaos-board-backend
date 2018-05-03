@@ -8,16 +8,6 @@ const containerSchema = new mongoose.Schema({
   cards: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Card' }]
 })
 
-containerSchema.statics.format = function({
-  _id,
-  title,
-  description,
-  position,
-  cards
-}) {
-  return { id: _id, title, description, position, cards }
-}
-
 if (!containerSchema.options.toObject) containerSchema.options.toObject = {}
 containerSchema.options.toObject.transform = function(doc, ret, options) {
   return {

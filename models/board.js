@@ -7,15 +7,6 @@ const boardSchema = new mongoose.Schema({
   containers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Container' }]
 })
 
-boardSchema.statics.format = function({ _id, title, description, containers }) {
-  return {
-    id: _id,
-    title,
-    description,
-    containers
-  }
-}
-
 if (!boardSchema.options.toObject) boardSchema.options.toObject = {}
 boardSchema.options.toObject.transform = function(doc, ret, options) {
   return {

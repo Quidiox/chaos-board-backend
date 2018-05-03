@@ -6,15 +6,6 @@ const cardSchema = new mongoose.Schema({
   position: Number
 })
 
-cardSchema.statics.format = function({ _id, title, text, position }) {
-  return {
-    id: _id,
-    title,
-    text,
-    position
-  }
-}
-
 if (!cardSchema.options.toObject) cardSchema.options.toObject = {};
 cardSchema.options.toObject.transform = function(doc, ret, options) {
   return {
