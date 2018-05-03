@@ -6,7 +6,7 @@ const Card = require('../models/card')
 containerRouter.get('/', async (req, res) => {
   try {
     const containers = await Container.find({}).populate('cards')
-    res.json(containers.map(Container.format))
+    res.json(containers)
   } catch (error) {
     console.log(error)
     res.status(400).json('get request failed')
@@ -18,7 +18,7 @@ containerRouter.get('/:containerId', async (req, res) => {
     const container = await Container.findById(
       req.params.containerId
     ).populate('cards')
-    res.json(Container.format(container))
+    res.json(container)
   } catch (error) {
     console.log(error)
     res.status(404).json({ error: 'malformed id' })
@@ -30,8 +30,7 @@ containerRouter.get('/:boardId', async (req, res) => {
     const containers = await Container.find({
       boardId: req.params.boardId
     }).populate('cards')
-    const formattedContainers = containers.map(Container.format)
-    res.json(formattedContainers)
+    res.json(containers)
   } catch (error) {
     console.log(error)
     res.status(404).json({ error: 'board does not exist' })
@@ -54,7 +53,7 @@ containerRouter.post('/:boardId', async (req, res) => {
     const board = await Board.findById(req.params.boardId)
     await board.containers.push(savedContainer._id)
     await board.save()
-    res.json(Container.format(savedContainer))
+    res.json(savedContainer)
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'something went wrong' })
@@ -82,7 +81,7 @@ containerRouter.put('/:containerId', async (req, res) => {
       req.body,
       { new: true }
     )
-    res.json(Container.format(updatedContainer))
+    res.json(updatedContainer)
   } catch (error) {
     console.log(error)
     res.status(400).send({ error: 'malformatted id or data' })

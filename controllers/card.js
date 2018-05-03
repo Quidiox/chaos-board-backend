@@ -5,7 +5,7 @@ const Card = require('../models/card')
 cardRouter.get('/', async (req, res) => {
   try {
     const cards = await Card.find({})
-    res.json(cards.map(Card.format))
+    res.json(cards)
   } catch (error) {
     console.log(error)
     res.status(400).json({error: 'get cards request failed'})
@@ -33,7 +33,7 @@ cardRouter.post('/:containerId', async (req, res) => {
     const container = await Container.findById(req.params.containerId)
     await container.cards.push(savedCard._id)
     await container.save()
-    res.json(Card.format(savedCard))
+    res.json(savedCard)
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'adding new card failed' })
@@ -62,7 +62,7 @@ cardRouter.put('/:containerId/:cardId', async (req, res) => {
       req.body,
       { new: true }
     )
-    res.json(Card.format(updatedCard))
+    res.json(updatedCard)
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'malformatted id or data' })

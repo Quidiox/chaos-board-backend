@@ -1,7 +1,7 @@
 
 @baseUrl=http://localhost:3005/api/board
-@boardId=5ae97f3d4964c83b1006f55d
-@deleteBoardId=5ae97f3d4964c83b1006f55d
+@boardId=5ae9d453b0f47c69442dd3b9
+@deleteBoardId=5aeae6dd47177a8e5c6115e2
 
 GET {{baseUrl}}
 

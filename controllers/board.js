@@ -7,11 +7,9 @@ boardRouter.get('/', async (req, res) => {
   try {
     const boards = await Board.find({}).populate({
       path: 'containers',
-      select: 'title description position',
-      populate: { path: 'cards', model: 'Card', select: 'title text position' }
+      populate: { path: 'cards', model: 'Card' }
     })
-    const formattedBoards = boards.map(Board.format)
-    res.json(formattedBoards)
+    res.json(boards)
   } catch (error) {
     console.log(error)
     res.status(404).json({ error: 'something went wrong' })
@@ -22,10 +20,9 @@ boardRouter.get('/:boardId', async (req, res) => {
   try {
     const board = await Board.findById(req.params.boardId).populate({
       path: 'containers',
-      select: 'title description position',
-      populate: { path: 'cards', model: 'Card', select: 'title text position' }
+      populate: { path: 'cards', model: 'Card' }
     })
-    res.json(Board.format(board))
+    res.json(board)
   } catch (error) {
     console.log(error)
     res.status(404).json({ error: 'requested board does not exist' })
@@ -40,7 +37,7 @@ boardRouter.post('/', async (req, res) => {
       description: body.description
     })
     const savedBoard = await board.save()
-    res.json(Board.format(savedBoard))
+    res.json(savedBoard)
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'something went wrong when adding board' })
