@@ -2,7 +2,7 @@
 @baseUrl=http://localhost:3005/api/container
 @containerId=5ae70eddb52b800588b2e7c5
 @deleteContainerId=5ae96043fef97d6ff83415a5
-@boardId=5ae97f3d4964c83b1006f55d
+@boardId=5ae9d453b0f47c69442dd3b9
 
 GET {{baseUrl}}
 
@@ -20,9 +20,9 @@ POST {{baseUrl}}/{{boardId}}
 Content-Type: application/json
 
 {
-  "title": "test container title",
-  "description": "container description",
-  "position": 0
+  "title": "fourth",
+  "description": "description not used",
+  "position": 3
 }
 
 ###

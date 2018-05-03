@@ -1,9 +1,13 @@
 
 @baseUrl=http://localhost:3005/api/card
-@containerId=5ae97f4c4964c83b1006f55e
-@cardId=5ae714ed490fa84734900534
+@containerId=5ae9d499b0f47c69442dd3bd
+@cardId=5ae97664b79e7846ac98477c
 
 GET {{baseUrl}}
+
+###
+
+DELETE {{baseUrl}}/5ae97ea04964c83b1006f55c
 
 ###
 
@@ -11,9 +15,9 @@ POST {{baseUrl}}/{{containerId}}
 Content-Type: application/json
 
 {
-  "title": "yes it works",
-  "text": "at last",
-  "position": 2
+  "title": "javascript for life!",
+  "text": "the second awesome card",
+  "position": 1
 }
 
 ###

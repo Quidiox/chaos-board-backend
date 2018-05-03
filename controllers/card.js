@@ -12,6 +12,15 @@ cardRouter.get('/', async (req, res) => {
   }
 })
 
+cardRouter.delete('/:cardId', async (req, res) => {
+  try {
+    await Card.findByIdAndRemove(req.params.cardId)
+    res.status(204).end()
+  } catch (error) {
+    res.status(400).json({error: 'malformed id'})
+  }
+})
+
 cardRouter.post('/:containerId', async (req, res) => {
   try {
     const body = req.body

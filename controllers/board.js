@@ -68,7 +68,6 @@ boardRouter.delete('/:boardId', async (req, res) => {
     )
     await board.containers.map(async container => {
       await container.cards.map(async card => {
-        console.log(card)
         await Card.findByIdAndRemove(card)
       })
       await Container.findByIdAndRemove(container._id)

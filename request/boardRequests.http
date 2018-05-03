@@ -1,7 +1,7 @@
 
 @baseUrl=http://localhost:3005/api/board
 @boardId=5ae97f3d4964c83b1006f55d
-@deleteBoardId=5ae97e17e7d5936ddc793986
+@deleteBoardId=5ae97f3d4964c83b1006f55d
 
 GET {{baseUrl}}
 
@@ -19,8 +19,8 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "title": "testing2",
-  "description": "test description"
+  "title": "test board",
+  "description": "description not used"
 }
 
 ###
