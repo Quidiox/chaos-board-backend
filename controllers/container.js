@@ -48,6 +48,21 @@ containerRouter.post('/:boardId', async (req, res) => {
   }
 })
 
+containerRouter.delete('/:containerId/:cardId', async (req, res) => {
+  try {
+    const container = await Container.findById(req.params.containerId).populate(
+      'cards'
+    )
+    const cards = container.cards.filter(card => card.id !== req.params.cardId)
+    container.cards = cards
+    await container.save()
+    res.status(204).end()
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error })
+  }
+})
+
 containerRouter.delete('/:containerId', async (req, res) => {
   try {
     const container = await Container.findById(req.params.containerId)
@@ -71,14 +86,52 @@ containerRouter.put('/move', async (req, res) => {
     dragPosContainer.position = body.hoverIndex
     await movedContainer.save()
     await dragPosContainer.save()
-    res.json({ success: 'all went well' })
+    res.json({ success: 'move container' })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'malformatted id' })
   }
 })
 
-containerRouter.put('/:containerId', async (req, res) => {
+containerRouter.put('/addtonew', async (req, res) => {
+  try {
+    const body = req.body
+    const container = await Container.findById(body.containerId)
+    const card = await Card.findById(body.cardId)
+    card.position = container.cards.length
+    await card.save()
+    container.cards.push(card.id)
+    await container.save()
+    res.json({ success: 'add went well' })
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'malformatted id' })
+  }
+})
+
+containerRouter.put('/removefromold', async (req, res) => {
+  try {
+    const body = req.body
+    const container = await Container.findById(body.containerId).populate('cards')
+    const modifiedCards = container.cards.filter(
+      card => card.id !== body.cardId
+    )
+    modifiedCards.forEach(async card => {
+      if (card.position > body.cardPosition) {
+        card.position -= 1
+        await card.save()
+      }
+    })
+    container.cards = modifiedCards
+    await container.save()
+    res.json({ success: 'remove went well' })
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'something went wrong' })
+  }
+})
+
+containerRouter.put('/edit/:containerId', async (req, res) => {
   try {
     const updatedContainer = await Container.findByIdAndUpdate(
       req.params.containerId,

@@ -1,8 +1,9 @@
 
 @baseUrl=http://localhost:3005/api/container
-@containerId=5ae70eddb52b800588b2e7c5
-@deleteContainerId=5ae96043fef97d6ff83415a5
+@containerId=5ae9d48eb0f47c69442dd3bc
+@deleteContainerId=5ae9d48eb0f47c69442dd3bc
 @boardId=5ae9d453b0f47c69442dd3b9
+@deleteCardId=5ae9d4dcb0f47c69442dd3be
 
 GET {{baseUrl}}
 
@@ -13,6 +14,10 @@ GET {{baseUrl}}/{{containerId}}
 ###
 
 DELETE {{baseUrl}}/{{deleteContainerId}}
+
+###
+
+DELETE {{baseUrl}}/{{deleteContainerId}}/{{deleteCardId}}
 
 ###
 
