@@ -62,6 +62,22 @@ containerRouter.delete('/:containerId', async (req, res) => {
   }
 })
 
+containerRouter.put('/move', async (req, res) => {
+  try {
+    const body = req.body
+    const movedContainer = await Container.findById(body.containerId)
+    const dragPosContainer = await Container.findById(body.dragPosContainerId)
+    movedContainer.position = body.dragIndex
+    dragPosContainer.position = body.hoverIndex
+    await movedContainer.save()
+    await dragPosContainer.save()
+    res.json({ success: 'all went well' })
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'malformatted id' })
+  }
+})
+
 containerRouter.put('/:containerId', async (req, res) => {
   try {
     const updatedContainer = await Container.findByIdAndUpdate(
