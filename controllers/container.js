@@ -100,7 +100,8 @@ containerRouter.put('/addtonew', async (req, res) => {
     const card = await Card.findById(body.cardId)
     card.position = container.cards.length
     await card.save()
-    container.cards.push(card.id)
+    const z = container.cards.addToSet(card.id)
+    console.log('logging z: ', z)
     await container.save()
     res.json({ success: 'add went well' })
   } catch (error) {
@@ -117,8 +118,9 @@ containerRouter.put('/removefromold', async (req, res) => {
       card => card.id !== body.cardId
     )
     modifiedCards.forEach(async card => {
-      if (card.position > body.cardPosition) {
+      if (card.position > body.itemIndex) {
         card.position -= 1
+        console.log(card)
         await card.save()
       }
     })
