@@ -1,7 +1,7 @@
 
 @baseUrl=http://localhost:3005/api/container
 @containerId=5ae9d48eb0f47c69442dd3bc
-@deleteContainerId=5ae9d499b0f47c69442dd3bd
+@deleteContainerId=5ae9d48eb0f47c69442dd3bc
 @boardId=5ae9d453b0f47c69442dd3b9
 @deleteCardId=5ae9d4f3b0f47c69442dd3bf
 

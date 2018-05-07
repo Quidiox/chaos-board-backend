@@ -100,8 +100,7 @@ containerRouter.put('/addtonew', async (req, res) => {
     const card = await Card.findById(body.cardId)
     card.position = container.cards.length
     await card.save()
-    const z = container.cards.addToSet(card.id)
-    console.log('logging z: ', z)
+    container.cards.addToSet(card.id)
     await container.save()
     res.json({ success: 'add went well' })
   } catch (error) {
