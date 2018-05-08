@@ -1,4 +1,5 @@
 const boardRouter = require('express').Router()
+const mongoose = require('mongoose')
 const Board = require('../models/board')
 const Container = require('../models/container')
 const Card = require('../models/card')
@@ -55,6 +56,23 @@ boardRouter.put('/:boardId', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'something went wrong while editing board' })
+  }
+})
+
+boardRouter.delete('/:boardId/:containerId', async (req, res) => {
+  try {
+    const board = await Board.findById(req.params.boardId).populate('containers')
+    //const containerId = mongoose.mongo.ObjectId(req.params.containerId)
+    const filteredContainers = board.containers.filter(c => {
+      return c.id !== req.params.containerId
+    })
+    board.containers = filteredContainers
+    console.log(filteredContainers)
+    await board.save()
+    res.status(204).end()
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'didnt succeed' })
   }
 })
 

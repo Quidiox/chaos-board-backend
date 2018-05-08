@@ -1,7 +1,7 @@
 
 @baseUrl=http://localhost:3005/api/container
 @containerId=5ae9d48eb0f47c69442dd3bc
-@deleteContainerId=5ae9d48eb0f47c69442dd3bc
+@deleteContainerId=5af19a3051e4694b34aa8ce9
 @boardId=5ae9d453b0f47c69442dd3b9
 @deleteCardId=5ae9d4f3b0f47c69442dd3bf
 
@@ -17,6 +17,10 @@ DELETE {{baseUrl}}/{{deleteContainerId}}
 
 ###
 
+DELETE {{baseUrl}}/{{boardId}}/{{deleteContainerId}}
+
+###
+
 DELETE {{baseUrl}}/{{deleteContainerId}}/{{deleteCardId}}
 
 ###
@@ -25,9 +29,8 @@ POST {{baseUrl}}/{{boardId}}
 Content-Type: application/json
 
 {
-  "title": "fourth",
-  "description": "description not used",
-  "position": 3
+  "title": "fifth",
+  "description": "yes"
 }
 
 ###

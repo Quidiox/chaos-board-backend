@@ -29,17 +29,17 @@ containerRouter.post('/:boardId', async (req, res) => {
   try {
     const body = req.body
     if (!body.title) {
-      res.status(400).json({ error: 'container missing' })
+      res.status(400).json({ error: 'container title missing' })
     }
-    console.log('hello ', body)
+    const board = await Board.findById(req.params.boardId)
     const container = new Container({
       title: body.title,
       description: body.description,
-      position: body.position
+      position: board.containers ? board.containers.length : 0
     })
+    console.log(board.containers)
     const savedContainer = await container.save()
-    const board = await Board.findById(req.params.boardId)
-    await board.containers.push(savedContainer._id)
+    board.containers.addToSet(savedContainer.id)
     await board.save()
     res.json(savedContainer)
   } catch (error) {
@@ -47,7 +47,7 @@ containerRouter.post('/:boardId', async (req, res) => {
     res.status(400).json({ error: 'something went wrong' })
   }
 })
-
+/*
 containerRouter.delete('/:containerId/:cardId', async (req, res) => {
   try {
     const container = await Container.findById(req.params.containerId).populate(
@@ -62,18 +62,32 @@ containerRouter.delete('/:containerId/:cardId', async (req, res) => {
     res.status(400).json({ error })
   }
 })
-
-containerRouter.delete('/:containerId', async (req, res) => {
+*/
+containerRouter.delete('/:boardId/:containerId', async (req, res) => {
   try {
     const container = await Container.findById(req.params.containerId)
-    await container.cards.map(async card => {
-      await Card.findByIdAndRemove(card._id)
+    await container.cards.map(async id => {
+      await Card.findByIdAndRemove(id)
     })
-    await Container.findByIdAndRemove(container._id)
+    await Container.findByIdAndRemove(container.id)
+    const board = await Board.findById(req.params.boardId)
+    const filtered = board.containers.filter(id => id !== req.params.containerId)
+    board.containers = filtered
+    board.save()
     res.status(204).end()
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'malformatted id' })
+  }
+})
+
+containerRouter.delete('/:containerId', async (req, res) => {
+  try {
+    await Container.findByIdAndRemove(req.params.containerId)
+    res.status(204).end()
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({error: 'something failed with delete'})
   }
 })
 

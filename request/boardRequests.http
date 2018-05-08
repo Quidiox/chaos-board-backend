@@ -1,13 +1,18 @@
 
 @baseUrl=http://localhost:3005/api/board
 @boardId=5ae9d453b0f47c69442dd3b9
-@deleteBoardId=5aeae6dd47177a8e5c6115e2
+@deleteBoardId=5af199fa51e4694b34aa8ce8
+@deleteContainerId=5af1992e7f265c996047a471
 
 GET {{baseUrl}}
 
 ###
 
 GET {{baseUrl}}/{{boardId}}
+
+###
+
+DELETE {{baseUrl}}/{{boardId}}/{{deleteContainerId}}
 
 ###
 
