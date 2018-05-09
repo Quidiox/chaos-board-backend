@@ -8,7 +8,7 @@ cardRouter.get('/', async (req, res) => {
     res.json(cards)
   } catch (error) {
     console.log(error)
-    res.status(400).json({error: 'get cards request failed'})
+    res.status(400).json({ error: 'get cards request failed' })
   }
 })
 
@@ -17,23 +17,23 @@ cardRouter.delete('/:cardId', async (req, res) => {
     await Card.findByIdAndRemove(req.params.cardId)
     res.status(204).end()
   } catch (error) {
-    res.status(400).json({error: 'malformed id'})
+    res.status(400).json({ error: 'malformed id' })
   }
 })
 
 cardRouter.post('/:containerId', async (req, res) => {
   try {
     const body = req.body
-    const card = new Card({
+    const container = await Container.findById(req.params.containerId)
+    const tempCard = new Card({
       title: body.title,
       text: body.text,
-      position: body.position
+      position: container.cards ? container.cards.length : 0
     })
-    const savedCard = await card.save()
-    const container = await Container.findById(req.params.containerId)
-    await container.cards.push(savedCard._id)
+    const card = await tempCard.save()
+    await container.cards.addToSet(card.id)
     await container.save()
-    res.json(savedCard)
+    res.json({card, containerId: req.params.containerId })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'adding new card failed' })
@@ -54,9 +54,8 @@ cardRouter.delete('/:containerId/:cardId', async (req, res) => {
   }
 })
 
-cardRouter.put('/:containerId/:cardId', async (req, res) => {
+cardRouter.put('/:cardId', async (req, res) => {
   try {
-    const body = req.body
     const updatedCard = await Card.findByIdAndUpdate(
       req.params.cardId,
       req.body,
@@ -78,7 +77,7 @@ cardRouter.put('/move', async (req, res) => {
     dragPosCard.position = body.hoverIndex
     await movedCard.save()
     await dragPosCard.save()
-    res.json({success: 'all went well'})
+    res.json({ success: 'all went well' })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'malformatted id' })
