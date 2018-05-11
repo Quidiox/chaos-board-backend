@@ -54,7 +54,7 @@ cardRouter.delete('/:containerId/:cardId', async (req, res) => {
   }
 })
 
-cardRouter.put('/:cardId', async (req, res) => {
+cardRouter.put('/edit/:cardId', async (req, res) => {
   try {
     const updatedCard = await Card.findByIdAndUpdate(
       req.params.cardId,
