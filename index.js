@@ -12,7 +12,10 @@ const containerRouter = require('./controllers/container')
 const cardRouter = require('./controllers/card')
 
 const app = express()
-mongoose.connect(config.mongoURI)
+mongoose.connect(config.mongoURI, {
+  reconnectTries: Number.MAX_VALUE,
+  reconnectInterval: 1000
+})
 mongoose.Promise = global.Promise
 
 app.use(morgan('dev'))
@@ -23,10 +26,6 @@ app.use(bodyParser.json())
 app.use('/api/board', boardRouter)
 app.use('/api/container', containerRouter)
 app.use('/api/card', cardRouter)
-
-app.get('/containers', (req, res) => {
-  res.json(data)
-})
 
 const PORT = config.port
 const server = http.createServer(app)
@@ -40,5 +39,6 @@ server.on('close', () => {
 })
 
 module.exports = {
-  app, server
+  app,
+  server
 }
