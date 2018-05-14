@@ -65,15 +65,23 @@ containerRouter.delete('/:containerId/:cardId', async (req, res) => {
 */
 containerRouter.delete('/:boardId/:containerId', async (req, res) => {
   try {
-    const container = await Container.findById(req.params.containerId)
-    await container.cards.map(async id => {
-      await Card.findByIdAndRemove(id)
-    })
-    await Container.findByIdAndRemove(container.id)
-    const board = await Board.findById(req.params.boardId)
-    const filtered = board.containers.filter(id => id !== req.params.containerId)
-    board.containers = filtered
-    board.save()
+    const container = await Container.findByIdAndRemove(req.params.containerId)
+    await Board.update(
+      { _id: req.params.boardId },
+      { '$pull': { 'containers': req.params.containerId } },
+      { safe: true }
+    )
+    const board = await Board.findById(req.params.boardId).populate(
+      'containers'
+    )
+    container.cards.map(async id => await Card.findByIdAndRemove(id))
+    board.containers.map(async c => {
+        if (c.position > container.position) {
+          c.position -= 1
+          await c.save()
+        }
+        return c
+      })
     res.status(204).end()
   } catch (error) {
     console.log(error)
@@ -87,7 +95,7 @@ containerRouter.delete('/:containerId', async (req, res) => {
     res.status(204).end()
   } catch (error) {
     console.log(error)
-    res.status(400).json({error: 'something failed with delete'})
+    res.status(400).json({ error: 'something failed with delete' })
   }
 })
 
@@ -126,7 +134,9 @@ containerRouter.put('/addtonew', async (req, res) => {
 containerRouter.put('/removefromold', async (req, res) => {
   try {
     const body = req.body
-    const container = await Container.findById(body.containerId).populate('cards')
+    const container = await Container.findById(body.containerId).populate(
+      'cards'
+    )
     const modifiedCards = container.cards.filter(
       card => card.id !== body.cardId
     )

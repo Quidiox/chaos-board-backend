@@ -43,15 +43,18 @@ cardRouter.post('/:containerId', async (req, res) => {
 cardRouter.delete('/:containerId/:cardId', async (req, res) => {
   try {
     const card = await Card.findByIdAndRemove(req.params.cardId)
+    await Container.update(
+      { _id: req.params.containerId },
+      { '$pull': { 'cards': req.params.cardId } },
+      { safe: true }
+    )
     const container = await Container.findById(req.params.containerId).populate('cards')
-    const cards = container.cards.filter(card => card.id !== req.params.cardId).map(c => {
+    await container.cards.map(async c => {
       if(c.position > card.position) {
         c.position -= 1
+        c.save()
       }
-      return c
     })
-    container.cards = cards
-    await container.save()
     res.status(204).end()
   } catch (error) {
     console.log(error)
