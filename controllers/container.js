@@ -152,7 +152,7 @@ containerRouter.put('/edit/:containerId', async (req, res) => {
       req.params.containerId,
       req.body,
       { new: true }
-    )
+    ).populate('cards')
     res.json(updatedContainer)
   } catch (error) {
     console.log(error)
