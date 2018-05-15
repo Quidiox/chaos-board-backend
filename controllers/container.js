@@ -124,7 +124,7 @@ containerRouter.put('/addtonew', async (req, res) => {
     await card.save()
     container.cards.addToSet(card.id)
     await container.save()
-    res.json({ success: 'add went well' })
+    res.json({ success: 'Card moved to target container' })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'malformatted id' })
@@ -143,13 +143,12 @@ containerRouter.put('/removefromold', async (req, res) => {
     modifiedCards.forEach(async card => {
       if (card.position > body.itemIndex) {
         card.position -= 1
-        console.log(card)
         await card.save()
       }
     })
     container.cards = modifiedCards
     await container.save()
-    res.json({ success: 'remove went well' })
+    res.json({ success: 'Card removed from source container' })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'something went wrong' })

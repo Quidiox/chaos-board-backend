@@ -9,6 +9,8 @@ const config = require('./utils/config')
 const boardRouter = require('./controllers/board')
 const containerRouter = require('./controllers/container')
 const cardRouter = require('./controllers/card')
+const userRouter = require('./controllers/user')
+const loginRouter = require('./controllers/login')
 
 const app = express()
 mongoose.connect(config.mongoURI, {
@@ -25,6 +27,8 @@ app.use(bodyParser.json())
 app.use('/api/board', boardRouter)
 app.use('/api/container', containerRouter)
 app.use('/api/card', cardRouter)
+app.use('/api/user', userRouter)
+app.use('/api/login', loginRouter)
 
 const PORT = config.port
 const server = http.createServer(app)

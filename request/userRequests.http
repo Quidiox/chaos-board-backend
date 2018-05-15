@@ -1,0 +1,24 @@
+@baseUrl=http://localhost:3005/api/user/
+
+@loginUrl=http://localhost:3005/api/login/
+
+GET {{baseUrl}}
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "username": "winwin",
+  "name": "reality",
+  "password": "loselose"
+}
+###
+POST {{loginUrl}}
+Content-Type: application/json
+
+{
+  "username": "winwin",
+  "password": "loselose"
+}
+###
+DELETE {{baseUrl}}/5afafee6a82a2f979889e531
