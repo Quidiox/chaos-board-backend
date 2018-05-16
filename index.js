@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
+const jwt = require('express-jwt')
 const config = require('./utils/config')
 const boardRouter = require('./controllers/board')
 const containerRouter = require('./controllers/container')
@@ -24,6 +25,11 @@ app.use(helmet())
 app.use(cors())
 app.use(bodyParser.json())
 
+app.use(
+  jwt({ secret: process.env.SECRET }).unless({
+    path: ['/api/login', '/api/user/create']
+  })
+)
 app.use('/api/board', boardRouter)
 app.use('/api/container', containerRouter)
 app.use('/api/card', cardRouter)
@@ -39,6 +45,26 @@ server.listen(config.port, () => {
 
 server.on('close', () => {
   mongoose.connection.close()
+})
+
+app.use(function(err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).send('token invalid or missing')
+  }
+  next(err)
+})
+
+app.use(function(err, req, res, next) {
+  if (!err) return next()
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.status(err.status || 500)
+  res.render('error', { error: err })
+})
+
+app.use(function(req, res, next) {
+  res.status(404)
+  res.render('Not Found')
 })
 
 module.exports = {

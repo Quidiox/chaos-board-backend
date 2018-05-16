@@ -12,14 +12,24 @@ userRouter.get('/', async (req, res) => {
   }
 })
 
-userRouter.post('/', async (req, res) => {
+userRouter.get('/:userId', async (req, res) => {
   try {
-    const body = req.body
+    const user = await User.findById(req.params.userId).select('id username name memberOf').populate('memberOf')
+    res.json(user)
+  } catch (error) {
+    console.log(error)
+    res.status(400).send({error: 'failed to get user'})
+  }
+})
+
+userRouter.post('/create', async (req, res) => {
+  try {
+    const { username, name, password } = req.body
     const saltRounds = 10
-    const passwordHash = await bcrypt.hash(body.password, saltRounds)
+    const passwordHash = await bcrypt.hash(password, saltRounds)
     const user = new User({
-      username: body.username,
-      name: body.name,
+      username,
+      name,
       passwordHash
     })
     const savedUser = await user.save()
@@ -31,7 +41,7 @@ userRouter.post('/', async (req, res) => {
   }
 })
 
-userRouter.put('/:userId', async (req, res) => {
+userRouter.put('/edit/:userId', async (req, res) => {
   try {
     const user = User.findByIdAndUpdate(req.params.userId, req.body, {
       new: true
@@ -44,7 +54,7 @@ userRouter.put('/:userId', async (req, res) => {
   }
 })
 // TODO user can only delete his own account
-userRouter.delete('/:userId', async (req, res) => {
+userRouter.delete('/delete/:userId', async (req, res) => {
   try {
     await User.findByIdAndRemove(req.params.userId)
     res.status(204).end()
