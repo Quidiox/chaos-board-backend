@@ -25,11 +25,11 @@ app.use(helmet())
 app.use(cors())
 app.use(bodyParser.json())
 
-app.use(
-  jwt({ secret: process.env.SECRET }).unless({
-    path: ['/api/login', '/api/user/create']
-  })
-)
+// app.use(
+//   jwt({ secret: process.env.SECRET }).unless({
+//     path: ['/api/login', '/api/user/create']
+//   })
+// )
 app.use('/api/board', boardRouter)
 app.use('/api/container', containerRouter)
 app.use('/api/card', cardRouter)

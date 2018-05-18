@@ -33,7 +33,7 @@ cardRouter.post('/:containerId', async (req, res) => {
     const card = await tempCard.save()
     await container.cards.addToSet(card.id)
     await container.save()
-    res.json({card, containerId: req.params.containerId })
+    res.json({ card, containerId: req.params.containerId })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'adding new card failed' })
@@ -45,12 +45,14 @@ cardRouter.delete('/:containerId/:cardId', async (req, res) => {
     const card = await Card.findByIdAndRemove(req.params.cardId)
     await Container.update(
       { _id: req.params.containerId },
-      { '$pull': { 'cards': req.params.cardId } },
+      { $pull: { cards: req.params.cardId } },
       { safe: true }
     )
-    const container = await Container.findById(req.params.containerId).populate('cards')
+    const container = await Container.findById(req.params.containerId).populate(
+      'cards'
+    )
     await container.cards.map(async c => {
-      if(c.position > card.position) {
+      if (c.position > card.position) {
         c.position -= 1
         c.save()
       }
@@ -78,13 +80,26 @@ cardRouter.put('/edit/:cardId', async (req, res) => {
 
 cardRouter.put('/move', async (req, res) => {
   try {
-    const body = req.body
-    const movedCard = await Card.findById(body.cardId)
-    const dragPosCard = await Card.findById(body.dragPosCardId)
-    movedCard.position = body.dragIndex
-    dragPosCard.position = body.hoverIndex
+    const { hoverIndex, dragIndex, cardId, containerId } = req.body
+    const movedCard = await Card.findById(cardId)
+    const container = await Container.findById(containerId).populate('cards')
+    movedCard.position = hoverIndex
+    if (hoverIndex < dragIndex) {
+      container.cards.forEach(async card => {
+        if (card.position < dragIndex && card.position >= hoverIndex) {
+          card.position += 1
+          await card.save()
+        }
+      })
+    } else {
+      container.cards.forEach(async card => {
+        if (card.position > dragIndex && card.position <= hoverIndex) {
+          card.position -= 1
+          await card.save()
+        }
+      })
+    }
     await movedCard.save()
-    await dragPosCard.save()
     res.json({ success: 'all went well' })
   } catch (error) {
     console.log(error)
