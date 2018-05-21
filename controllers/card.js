@@ -84,21 +84,19 @@ cardRouter.put('/move', async (req, res) => {
     const movedCard = await Card.findById(cardId)
     const container = await Container.findById(containerId).populate('cards')
     movedCard.position = hoverIndex
-    if (hoverIndex < dragIndex) {
-      container.cards.forEach(async card => {
+    container.cards.forEach(async card => {
+      if (hoverIndex < dragIndex) {
         if (card.position < dragIndex && card.position >= hoverIndex) {
           card.position += 1
           await card.save()
         }
-      })
-    } else {
-      container.cards.forEach(async card => {
+      } else if(hoverIndex > dragIndex) {
         if (card.position > dragIndex && card.position <= hoverIndex) {
           card.position -= 1
           await card.save()
         }
-      })
-    }
+      }
+    })
     await movedCard.save()
     res.json({ success: 'all went well' })
   } catch (error) {
