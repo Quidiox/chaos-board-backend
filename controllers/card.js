@@ -90,7 +90,7 @@ cardRouter.put('/move', async (req, res) => {
           card.position += 1
           await card.save()
         }
-      } else if(hoverIndex > dragIndex) {
+      } else if (hoverIndex > dragIndex) {
         if (card.position > dragIndex && card.position <= hoverIndex) {
           card.position -= 1
           await card.save()
@@ -102,6 +102,36 @@ cardRouter.put('/move', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'malformatted id' })
+  }
+})
+
+cardRouter.put('/betweencontainers', async (req, res) => {
+  try {
+    const { card, sourceContainerId, targetContainerId } = req.body
+    const sourceContainer = await Container.findById(
+      sourceContainerId
+    ).populate('cards')
+    const targetContainer = await Container.findById(targetContainerId)
+    cardInDb = await Card.findById(card.id)
+    cardInDb.position = targetContainer.cards.length
+    await cardInDb.save()
+    targetContainer.cards.addToSet(cardInDb)
+    await targetContainer.save()
+    const filteredCards = await sourceContainer.cards.filter(
+      c => c.id !== card.id
+    )
+    filteredCards.forEach(async c => {
+      if (c.position > card.position) {
+        c.position -= 1
+        await c.save()
+      }
+    })
+    sourceContainer.cards = filteredCards
+    await sourceContainer.save()
+    res.json({ success: 'Hello from between containers!!!' })
+  } catch (error) {
+    console.log(error)
+    res.json(400, 'Something went wrong while moving card between containers')
   }
 })
 
