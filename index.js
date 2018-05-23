@@ -36,7 +36,7 @@ app.use('/api/card', cardRouter)
 app.use('/api/user', userRouter)
 app.use('/api/login', loginRouter)
 
-const PORT = config.port
+const PORT = config.port || 3001
 const server = http.createServer(app)
 
 server.listen(config.port, () => {
@@ -49,22 +49,20 @@ server.on('close', () => {
 
 app.use(function(err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
-    res.status(401).send('token invalid or missing')
+    console.log(err)
+    res.status(401).json({error: 'token invalid or missing'})
   }
   next(err)
 })
 
 app.use(function(err, req, res, next) {
   if (!err) return next()
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500)
-  res.render('error', { error: err })
+  console.log(err)
+  res.status(500).send('internal server error')
 })
 
 app.use(function(req, res, next) {
-  res.status(404)
-  res.render('Not Found')
+  res.json(404, 'Not found')
 })
 
 module.exports = {

@@ -128,7 +128,7 @@ cardRouter.put('/betweencontainers', async (req, res) => {
     })
     sourceContainer.cards = filteredCards
     await sourceContainer.save()
-    res.json({ success: 'Hello from between containers!!!' })
+    res.json({ success: 'Moving card between containers succeeded' })
   } catch (error) {
     console.log(error)
     res.json(400, 'Something went wrong while moving card between containers')
