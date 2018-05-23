@@ -36,17 +36,6 @@ app.use('/api/card', cardRouter)
 app.use('/api/user', userRouter)
 app.use('/api/login', loginRouter)
 
-const PORT = config.port || 3001
-const server = http.createServer(app)
-
-server.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`)
-})
-
-server.on('close', () => {
-  mongoose.connection.close()
-})
-
 app.use(function(err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
     console.log(err)
@@ -63,6 +52,17 @@ app.use(function(err, req, res, next) {
 
 app.use(function(req, res, next) {
   res.json(404, 'Not found')
+})
+
+const PORT = config.port || 3001
+const server = http.createServer(app)
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+
+server.on('close', () => {
+  mongoose.connection.close()
 })
 
 module.exports = {
