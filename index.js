@@ -14,8 +14,8 @@ const userRouter = require('./controllers/user')
 const loginRouter = require('./controllers/login')
 
 const app = express()
-const mongoURI = config.mongoURI
-mongoose.connect(mongoURI, {
+const MONGODB_URI = config.mongoURI
+mongoose.connect(MONGODB_URI, {
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 1000
 })
