@@ -1,7 +1,7 @@
-
+@herokuBaseUrl=https://chaos-board-backend.herokuapp.com/api/board
 @baseUrl=http://localhost:3005/api/board
 @boardId=5ae9d453b0f47c69442dd3b9
-@deleteBoardId=5af199fa51e4694b34aa8ce8
+@deleteBoardId=5b0541fd4c27247d5410d9a2
 @deleteContainerId=5af1992e7f265c996047a471
 
 GET {{baseUrl}}
@@ -20,11 +20,11 @@ DELETE {{baseUrl}}/{{deleteBoardId}}
 
 ###
 
-POST {{baseUrl}}
+POST {{herokuBaseUrl}}
 Content-Type: application/json
 
 {
-  "title": "test board",
+  "title": "Chaos board",
   "description": "description not used"
 }
 

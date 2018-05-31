@@ -6,7 +6,6 @@ const User = require('../models/user')
 loginRouter.post('/', async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username })
-    console.log(user, req.body.password)
     const passwordsMatch =
       user === null
         ? false
@@ -20,10 +19,34 @@ loginRouter.post('/', async (req, res) => {
       id: user.id
     }
     const token = jwt.sign(userForToken, process.env.SECRET)
-    res.status(200).send({ token, username: user.username, name: user.name })
+    res.json({ token, username: user.username, name: user.name, id: user.id })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'invalid login credentials' })
+  }
+})
+
+loginRouter.post('/verifytoken', async (req, res) => {
+  try {
+    const { token, username } = req.body
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    const userExists = await User.findOne({ username })
+    if (
+      !token ||
+      !decodedToken.id ||
+      !userExists ||
+      decodedToken.id !== userExists.id
+    ) {
+      return res.status(401).json({ error: 'token missing or invalid' })
+    }
+    res.json({ success: 'token is valid' })
+  } catch (error) {
+    console.log(error)
+    if (error.name === 'JsonWebTokenError') {
+      res.status(401).json({ error: error.message })
+    } else {
+      res.status(500).json({ error: 'something went wrong...' })
+    }
   }
 })
 

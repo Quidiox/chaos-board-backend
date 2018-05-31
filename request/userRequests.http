@@ -4,7 +4,7 @@
 
 @userId=5afb052874131984ccb7a017
 
-GET http://localhost:3005/api/login
+GET http://localhost:3005/api/user
 ###
 GET {{baseUrl}}/{{userId}}
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndpbndpbiIsImlkIjoiNWFmYjA1Mjg3NDEzMTk4NGNjYjdhMDE3IiwiaWF0IjoxNTI2NDY0NTM2fQ.vRKGY1AeY0OjgU5SKwGJHNVx1xMS9TLav035cmRxxbA
