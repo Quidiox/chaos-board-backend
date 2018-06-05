@@ -34,7 +34,7 @@ userRouter.get('/:userId', async (req, res) => {
   }
 })
 
-userRouter.post('/', async (req, res) => {
+userRouter.post('/create', async (req, res) => {
   try {
     const { username, name, password } = req.body
     const saltRounds = 10
