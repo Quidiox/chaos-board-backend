@@ -28,15 +28,8 @@ loginRouter.post('/', async (req, res) => {
 
 loginRouter.post('/verifytoken', async (req, res) => {
   try {
-    const { token, username } = req.body
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-    const userExists = await User.findOne({ username })
-    if (
-      !token ||
-      !decodedToken.id ||
-      !userExists ||
-      decodedToken.id !== userExists.id
-    ) {
+    const userExists = await User.findById(req.user.id)
+    if (!req.user.id || !userExists || req.user.id !== userExists.id) {
       return res.status(401).json({ error: 'token missing or invalid' })
     }
     res.json({ success: 'token is valid' })

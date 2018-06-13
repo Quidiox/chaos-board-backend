@@ -26,7 +26,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(
   jwt({ secret: process.env.SECRET }).unless({
-    path: ['/api/login', '/api/login/verifytoken', '/api/user/create']
+    path: ['/api/login', '/api/user/create']
   })
 )
 app.use('/api/login', loginRouter)
@@ -38,7 +38,7 @@ app.use('/api/card', cardRouter)
 app.use(function(err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
     console.log(err)
-    res.status(401).json({error: 'token invalid or missing'})
+    res.status(401).json({ error: 'token invalid or missing' })
   }
   next(err)
 })
