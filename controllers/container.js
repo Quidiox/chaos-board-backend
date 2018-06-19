@@ -29,7 +29,7 @@ containerRouter.post('/:boardId', async (req, res) => {
   try {
     const body = req.body
     if (!body.title) {
-      res.status(400).json({ error: 'container title missing' })
+      return res.status(400).json({ error: 'container title missing' })
     }
     const board = await Board.findById(req.params.boardId)
     const container = new Container({
@@ -37,7 +37,6 @@ containerRouter.post('/:boardId', async (req, res) => {
       description: body.description,
       position: board.containers ? board.containers.length : 0
     })
-    console.log(board.containers)
     const savedContainer = await container.save()
     board.containers.addToSet(savedContainer.id)
     await board.save()
@@ -68,7 +67,7 @@ containerRouter.delete('/:boardId/:containerId', async (req, res) => {
     const container = await Container.findByIdAndRemove(req.params.containerId)
     await Board.update(
       { _id: req.params.boardId },
-      { '$pull': { 'containers': req.params.containerId } },
+      { $pull: { containers: req.params.containerId } },
       { safe: true }
     )
     const board = await Board.findById(req.params.boardId).populate(
@@ -76,12 +75,12 @@ containerRouter.delete('/:boardId/:containerId', async (req, res) => {
     )
     container.cards.map(async id => await Card.findByIdAndRemove(id))
     board.containers.map(async c => {
-        if (c.position > container.position) {
-          c.position -= 1
-          await c.save()
-        }
-        return c
-      })
+      if (c.position > container.position) {
+        c.position -= 1
+        await c.save()
+      }
+      return c
+    })
     res.status(204).end()
   } catch (error) {
     console.log(error)
