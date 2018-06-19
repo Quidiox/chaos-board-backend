@@ -1,21 +1,7 @@
 const boardRouter = require('express').Router()
-const mongoose = require('mongoose')
 const Board = require('../models/board')
 const Container = require('../models/container')
 const Card = require('../models/card')
-
-boardRouter.get('/', async (req, res) => {
-  try {
-    const boards = await Board.find({}).populate({
-      path: 'containers',
-      populate: { path: 'cards', model: 'Card' }
-    })
-    res.json(boards)
-  } catch (error) {
-    console.log(error)
-    res.status(404).json({ error: 'something went wrong' })
-  }
-})
 
 boardRouter.get('/:boardId', async (req, res) => {
   try {
@@ -35,13 +21,15 @@ boardRouter.post('/', async (req, res) => {
     const body = req.body
     const board = new Board({
       title: body.title,
-      description: body.description
+      description: body.description,
+      owner: req.user.id,
+      members: [req.user.id]
     })
     const savedBoard = await board.save()
     res.json(savedBoard)
   } catch (error) {
     console.log(error)
-    res.status(400).json({ error: 'something went wrong when adding board' })
+    res.status(400).json({ error: 'something went wrong when creating a board' })
   }
 })
 

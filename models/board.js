@@ -4,7 +4,8 @@ const boardSchema = new mongoose.Schema({
   title: String,
   description: String,
   containers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Container' }],
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  members: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}]
 })
 
 if (!boardSchema.options.toObject) boardSchema.options.toObject = {}
@@ -14,7 +15,8 @@ boardSchema.options.toObject.transform = function(doc, ret, options) {
     title: ret.title,
     description: ret.description,
     containers: ret.containers,
-    user: ret.user
+    owner: ret.owner,
+    members: ret.members
   }
 }
 
