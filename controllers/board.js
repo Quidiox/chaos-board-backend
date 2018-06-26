@@ -16,23 +16,6 @@ boardRouter.get('/:boardId', async (req, res) => {
   }
 })
 
-boardRouter.post('/', async (req, res) => {
-  try {
-    const body = req.body
-    const board = new Board({
-      title: body.title,
-      description: body.description,
-      owner: req.user.id,
-      members: [req.user.id]
-    })
-    const savedBoard = await board.save()
-    res.json(savedBoard)
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({ error: 'something went wrong when creating a board' })
-  }
-})
-
 boardRouter.put('/:boardId', async (req, res) => {
   try {
     const updatedBoard = await Board.findByIdAndUpdate(
