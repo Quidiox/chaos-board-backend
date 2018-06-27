@@ -3,15 +3,6 @@ const jwt = require('jsonwebtoken')
 const userRouter = require('express').Router()
 const User = require('../models/user')
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  console.log(authorization)
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
-
 userRouter.get('/', async (req, res) => {
   try {
     const users = await User.find({}).populate('memberOf')
@@ -55,15 +46,13 @@ userRouter.post('/create', async (req, res) => {
     }
   }
 })
-// TODO user can only delete his own account
+
 userRouter.delete('/:userId', async (req, res) => {
   try {
-    const token = getTokenFrom(req)
+    const token = req.user.token
     const decodedToken = jwt.verify(token, process.env.SECRET)
-    if(!token ||
-      !decodedToken.id ||
-      decodedToken.id !== req.params.userId) {
-        return res.status(401).json({ error: 'token missing or invalid' })
+    if (!token || !decodedToken.id || decodedToken.id !== req.params.userId) {
+      return res.status(401).json({ error: 'token missing or invalid' })
     }
     await User.findByIdAndRemove(req.params.userId)
     res.status(204).end()
@@ -75,13 +64,33 @@ userRouter.delete('/:userId', async (req, res) => {
 
 userRouter.put('/:userId', async (req, res) => {
   try {
+    const { password } = req.body
+    if (password) {
+      const saltRounds = 10
+      const passwordHash = await bcrypt.hash(password, saltRounds)
+      const user = new User({
+        username: req.body.username,
+        name: req.body.name,
+        passwordHash
+      })
+      const modifiedUser = await User.findByIdAndUpdate(
+        req.params.userId,
+        user,
+        {
+          new: true
+        }
+      ).select('id username name memberOf')
+      return res.json(modifiedUser)
+    }
     console.log(req.body)
-    const token = getTokenFrom(req)
-    // const user = User.findByIdAndUpdate(req.params.userId, req.body, {
-    //   new: true
-    // })
-    // TODO user can only edit his own account and if passwordHash generated from the password doesn't match with the one in db need to generate new
-    //res.json(user)
+    const modifiedUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      req.body,
+      {
+        new: true
+      }
+    ).select('id username name memberOf')
+    res.json(modifiedUser)
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'updating user failed' })
