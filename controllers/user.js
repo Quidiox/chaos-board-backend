@@ -80,9 +80,13 @@ userRouter.put('/:userId', async (req, res) => {
           new: true
         }
       ).select('id username name memberOf')
-      return res.json(modifiedUser)
+      const userForToken = {
+        username: modifiedUser.username,
+        id: modifiedUser.id
+      }
+      const token = jwt.sign(userForToken, process.env.SECRET)
+      return res.json({ token, username: modifiedUser.username, name: modifiedUser.name, id: modifiedUser.id })
     }
-    console.log(req.body)
     const modifiedUser = await User.findByIdAndUpdate(
       req.params.userId,
       req.body,
@@ -90,7 +94,12 @@ userRouter.put('/:userId', async (req, res) => {
         new: true
       }
     ).select('id username name memberOf')
-    res.json(modifiedUser)
+    const userForToken = {
+      username: modifiedUser.username,
+      id: modifiedUser.id
+    }
+    const token = jwt.sign(userForToken, process.env.SECRET)
+    res.json({ token, username: modifiedUser.username, name: modifiedUser.name, id: modifiedUser.id })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'updating user failed' })
