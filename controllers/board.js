@@ -16,20 +16,6 @@ boardRouter.get('/:boardId', async (req, res) => {
   }
 })
 
-boardRouter.put('/:boardId', async (req, res) => {
-  try {
-    const updatedBoard = await Board.findByIdAndUpdate(
-      req.params.boardId,
-      req.body,
-      { new: true }
-    )
-    res.json(updatedBoard)
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({ error: 'something went wrong while editing board' })
-  }
-})
-
 boardRouter.delete('/:boardId/:containerId', async (req, res) => {
   try {
     const board = await Board.findById(req.params.boardId).populate('containers')
@@ -42,25 +28,6 @@ boardRouter.delete('/:boardId/:containerId', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'didnt succeed' })
-  }
-})
-
-boardRouter.delete('/:boardId', async (req, res) => {
-  try {
-    const board = await Board.findById(req.params.boardId).populate(
-      'containers'
-    )
-    await board.containers.map(async container => {
-      await container.cards.map(async card => {
-        await Card.findByIdAndRemove(card)
-      })
-      await Container.findByIdAndRemove(container._id)
-    })
-    await Board.findByIdAndRemove(req.params.boardId)
-    res.status(204).end()
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({ error: 'malformed id' })
   }
 })
 

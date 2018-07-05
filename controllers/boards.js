@@ -11,6 +11,20 @@ boardsRouter.get('/:userId', async (req, res) => {
   }
 })
 
+boardsRouter.put('/:boardId', async (req, res) => {
+  try {
+    const updatedBoard = await Board.findByIdAndUpdate(
+      req.params.boardId,
+      req.body,
+      { new: true }
+    )
+    res.json(updatedBoard)
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'something went wrong while editing board' })
+  }
+})
+
 boardsRouter.post('/', async (req, res) => {
   try {
     const body = req.body
@@ -25,6 +39,25 @@ boardsRouter.post('/', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'something went wrong when creating a board' })
+  }
+})
+
+boardsRouter.delete('/:boardId', async (req, res) => {
+  try {
+    const board = await Board.findById(req.params.boardId).populate(
+      'containers'
+    )
+    await board.containers.map(async container => {
+      await container.cards.map(async card => {
+        await Card.findByIdAndRemove(card)
+      })
+      await Container.findByIdAndRemove(container._id)
+    })
+    await Board.findByIdAndRemove(req.params.boardId)
+    res.status(204).end()
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'malformed id' })
   }
 })
 
