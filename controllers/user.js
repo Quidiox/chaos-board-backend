@@ -3,16 +3,6 @@ const jwt = require('jsonwebtoken')
 const userRouter = require('express').Router()
 const User = require('../models/user')
 
-userRouter.get('/', async (req, res) => {
-  try {
-    const users = await User.find({}).populate('memberOf')
-    res.json(users)
-  } catch (error) {
-    console.log(error)
-    res.json(error)
-  }
-})
-
 userRouter.get('/:userId', async (req, res) => {
   try {
     const user = await User.findById(req.params.userId)
@@ -22,6 +12,28 @@ userRouter.get('/:userId', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(400).send({ error: 'failed to get user' })
+  }
+})
+
+userRouter.get('/:boardId/members', async (req, res) => {
+  try {
+    const users = await User.find({memberOf: req.params.boardId})
+    res.json(users)
+  } catch (error) {
+    console.log(error)
+    res.status(400).send({error: 'failed to get board members'})
+  }
+})
+
+userRouter.get('/', async (req, res) => {
+  try {
+    const users = await User.find({})
+      .select('id username name memberOf')
+      .populate('memberOf')
+    res.json(users)
+  } catch (error) {
+    console.log(error)
+    res.status(400).send({ error: 'failed to get users' })
   }
 })
 
@@ -85,7 +97,12 @@ userRouter.put('/:userId', async (req, res) => {
         id: modifiedUser.id
       }
       const token = jwt.sign(userForToken, process.env.SECRET)
-      return res.json({ token, username: modifiedUser.username, name: modifiedUser.name, id: modifiedUser.id })
+      return res.json({
+        token,
+        username: modifiedUser.username,
+        name: modifiedUser.name,
+        id: modifiedUser.id
+      })
     }
     const modifiedUser = await User.findByIdAndUpdate(
       req.params.userId,
@@ -99,7 +116,12 @@ userRouter.put('/:userId', async (req, res) => {
       id: modifiedUser.id
     }
     const token = jwt.sign(userForToken, process.env.SECRET)
-    res.json({ token, username: modifiedUser.username, name: modifiedUser.name, id: modifiedUser.id })
+    res.json({
+      token,
+      username: modifiedUser.username,
+      name: modifiedUser.name,
+      id: modifiedUser.id
+    })
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'updating user failed' })
