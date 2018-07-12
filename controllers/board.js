@@ -31,4 +31,32 @@ boardRouter.delete('/:boardId/:containerId', async (req, res) => {
   }
 })
 
+
+boardRouter.put('/:boardId/addmember', async (req, res) => {
+  try {
+    const { boardId, members } = req.body
+    const board = await Board.findById(boardId)
+    const combined = [...new Set([...members, ...board.members])]
+    board.members = combined
+    const savedBoard = await board.save()
+    res.json(savedBoard)
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'adding member to board failed'})
+  }
+})
+
+boardRouter.put('/:boardId/removemember', async (req, res) => {
+  try {
+    const {boardId, members} = req.body
+    const board = await Board.findById(req.params.boardId)
+    board.members = board.members.filter(id => id !== req.params.boardId)
+    const savedBoard = await board.save()
+    res.json(savedBoard)
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({ error: 'removing member from board failed'})
+  }
+})
+
 module.exports = boardRouter

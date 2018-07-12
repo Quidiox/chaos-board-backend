@@ -11,30 +11,6 @@ boardsRouter.get('/:userId', async (req, res) => {
   }
 })
 
-boardsRouter.put('/:boardId/addmember', async (req, res) => {
-  try {
-    const board = await Board.findById(req.params.boardId)
-    board.members.push(body.user.id)
-    const savedBoard = await board.save()
-    res.json(savedBoard)
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({ error: 'adding member to board failed'})
-  }
-})
-
-boardsRouter.put('/:boardId/removemember', async (req, res) => {
-  try {
-    const board = await Board.findById(req.params.boardId)
-    board.members = board.members.filter(id => id !== req.params.boardId)
-    const savedBoard = await board.save()
-    res.json(savedBoard)
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({ error: 'removing member from board failed'})
-  }
-})
-
 boardsRouter.put('/:boardId', async (req, res) => {
   try {
     const updatedBoard = await Board.findByIdAndUpdate(
