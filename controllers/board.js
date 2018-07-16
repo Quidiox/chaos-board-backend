@@ -29,6 +29,7 @@ boardRouter.get('/:boardId', async (req, res) => {
 boardRouter.delete('/:boardId/:containerId', async (req, res) => {
   try {
     const board = await Board.findById(req.params.boardId).populate('containers')
+    if(req.user.id !== board.owner.toString()) return res.status(401).end()
     const filteredContainers = board.containers.filter(c => {
       return c.id !== req.params.containerId
     })
@@ -37,15 +38,16 @@ boardRouter.delete('/:boardId/:containerId', async (req, res) => {
     res.status(204).end()
   } catch (error) {
     console.log(error)
-    res.status(400).json({ error: 'didnt succeed' })
+    res.status(400).json({ error: 'deleting board failed' })
   }
 })
 
 
-boardRouter.put('/:boardId/addmember', async (req, res) => {
+boardRouter.put('/:boardId/change', async (req, res) => {
   try {
     const { boardId, members } = req.body
     const board = await Board.findById(boardId)
+    if(req.user.id !== board.owner.toString()) return res.status(401).end()
     const combined = [...new Set([req.user.id, ...members])]
     board.members = combined
     const savedBoard = await board.save()
