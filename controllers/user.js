@@ -2,6 +2,9 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const userRouter = require('express').Router()
 const User = require('../models/user')
+const Board = require('../models/board')
+const Container = require('../models/container')
+const Card = require('../models/card')
 
 userRouter.get('/:userId', async (req, res) => {
   try {
@@ -17,11 +20,11 @@ userRouter.get('/:userId', async (req, res) => {
 
 userRouter.get('/:boardId/members', async (req, res) => {
   try {
-    const users = await User.find({memberOf: req.params.boardId})
+    const users = await User.find({ memberOf: req.params.boardId })
     res.json(users)
   } catch (error) {
     console.log(error)
-    res.status(400).send({error: 'failed to get board members'})
+    res.status(400).send({ error: 'failed to get board members' })
   }
 })
 
@@ -48,7 +51,12 @@ userRouter.post('/create', async (req, res) => {
       passwordHash
     })
     const savedUser = await user.save()
-    res.json(savedUser)
+    const userForToken = {
+      username: savedUser.username,
+      id: savedUser.id
+    }
+    const token = jwt.sign(userForToken, process.env.SECRET)
+    res.json({ token, username: savedUser.username, name: savedUser.name, id: savedUser.id })
   } catch (error) {
     console.log(error)
     if (error.code === 11000) {
@@ -61,11 +69,19 @@ userRouter.post('/create', async (req, res) => {
 
 userRouter.delete('/:userId', async (req, res) => {
   try {
-    const token = req.user.token
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!token || !decodedToken.id || decodedToken.id !== req.params.userId) {
-      return res.status(401).json({ error: 'token missing or invalid' })
-    }
+    const boards = await Board.find({ owner: req.user.id }).populate({
+      path: 'containers',
+      populate: { path: 'cards', model: 'Card' }
+    })
+    await boards.map(async board => {
+      await board.containers.map(async container => {
+        await container.cards.map(async card => {
+          await Card.findByIdAndRemove(card)
+        })
+        await Container.findByIdAndRemove(container._id)
+      })
+      await Board.findByIdAndRemove(board.id)
+    })
     await User.findByIdAndRemove(req.params.userId)
     res.status(204).end()
   } catch (error) {
