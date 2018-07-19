@@ -21,9 +21,9 @@ mongoose.connect(config.mongoURI, {
 })
 mongoose.Promise = global.Promise
 
+app.use(cors())
 app.use(morgan('dev'))
 app.use(helmet())
-app.use(cors())
 app.use(bodyParser.json())
 app.use(
   jwt({ secret: process.env.SECRET }).unless({
