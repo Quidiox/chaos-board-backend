@@ -56,7 +56,12 @@ userRouter.post('/create', async (req, res) => {
       id: savedUser.id
     }
     const token = jwt.sign(userForToken, process.env.SECRET)
-    res.json({ token, username: savedUser.username, name: savedUser.name, id: savedUser.id })
+    res.json({
+      token,
+      username: savedUser.username,
+      name: savedUser.name,
+      id: savedUser.id
+    })
   } catch (error) {
     console.log(error)
     if (error.code === 11000) {
@@ -78,9 +83,17 @@ userRouter.delete('/:userId', async (req, res) => {
         await container.cards.map(async card => {
           await Card.findByIdAndRemove(card)
         })
-        await Container.findByIdAndRemove(container._id)
+        await Container.findByIdAndRemove(container.id)
       })
       await Board.findByIdAndRemove(board.id)
+    })
+    const memberInBoards = await Board.find({ members: req.user.id })
+    await memberInBoards.map(async board => {
+      const members = board.members.filter(
+        id => id.toString() !== req.params.userId
+      )
+      board.members = members
+      await board.save()
     })
     await User.findByIdAndRemove(req.params.userId)
     res.status(204).end()
