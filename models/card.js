@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 const cardSchema = new mongoose.Schema({
   title: String,
-  text: String,
   position: Number
 })
 
@@ -11,7 +10,6 @@ cardSchema.options.toObject.transform = function(doc, ret, options) {
   return {
     id: ret._id,
     title: ret.title,
-    text: ret.text,
     position: ret.position
   }
 }

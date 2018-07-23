@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 const boardSchema = new mongoose.Schema({
   title: String,
-  description: String,
   containers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Container' }],
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   members: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}]
@@ -13,7 +12,6 @@ boardSchema.options.toObject.transform = function(doc, ret, options) {
   return {
     id: ret._id,
     title: ret.title,
-    description: ret.description,
     containers: ret.containers,
     owner: ret.owner,
     members: ret.members
