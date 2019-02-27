@@ -16,6 +16,8 @@ const loginRouter = require('./controllers/login')
 
 const app = express()
 mongoose.connect(config.mongoURI, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 1000
 })

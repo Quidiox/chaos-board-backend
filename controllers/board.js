@@ -1,7 +1,5 @@
 const boardRouter = require('express').Router()
 const Board = require('../models/board')
-const Container = require('../models/container')
-const Card = require('../models/card')
 
 boardRouter.get('/:boardId/members', async (req, res) => {
   try {

@@ -1,0 +1,8 @@
+@baseUrl=http://localhost:3005/api/userBoards
+
+@auth = bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndpbndpbiIsImlkIjoiNWFmYjA1Mjg3NDEzMTk4NGNjYjdhMDE3IiwiaWF0IjoxNTUxMjY4NTY2fQ.0A2kTsfpRCB2rjo70i2BQRMqavDm5FulfPzpbzHFvic
+
+@userId=5afb052874131984ccb7a017
+GET {{baseUrl}}/{{userId}}
+Authorization: {{auth}}
+###
